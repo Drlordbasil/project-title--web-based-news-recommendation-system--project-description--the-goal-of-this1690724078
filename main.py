@@ -13,6 +13,7 @@ nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
 
+
 class NewsArticle:
     def __init__(self, title, author, date, content):
         self.title = title
@@ -24,7 +25,8 @@ class NewsArticle:
         stop_words = set(stopwords.words('english'))
         lemmatizer = WordNetLemmatizer()
         tokens = word_tokenize(self.content.lower())
-        tokens = [lemmatizer.lemmatize(token) for token in tokens if token.isalpha()]
+        tokens = [lemmatizer.lemmatize(token)
+                  for token in tokens if token.isalpha()]
         tokens = [token for token in tokens if token not in stop_words]
         self.content = ' '.join(tokens)
 
@@ -60,7 +62,8 @@ class NewsRecommendationSystem:
         user_profile_vector = tfidf_vectorizer.transform([user_profile_text])
         similarities = cosine_similarity(user_profile_vector, tfidf_matrix)
         similarities = similarities.flatten()
-        articles_scores = [(article, score) for article, score in zip(self.news_articles, similarities)]
+        articles_scores = [(article, score) for article,
+                           score in zip(self.news_articles, similarities)]
         articles_scores.sort(key=lambda x: x[1], reverse=True)
         return articles_scores
 
@@ -91,7 +94,8 @@ class Database:
         self.conn.commit()
 
     def insert_user(self, name, preferred_categories):
-        self.cursor.execute('INSERT INTO users (name, preferred_categories) VALUES (?, ?)', (name, preferred_categories))
+        self.cursor.execute(
+            'INSERT INTO users (name, preferred_categories) VALUES (?, ?)', (name, preferred_categories))
         self.conn.commit()
         return self.cursor.lastrowid
 
@@ -107,7 +111,8 @@ class Database:
 
 
 app = Flask(__name__)
-recommendation_system = NewsRecommendationSystem('https://www.example.com/news')
+recommendation_system = NewsRecommendationSystem(
+    'https://www.example.com/news')
 database = Database()
 
 
